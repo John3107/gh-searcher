@@ -1,0 +1,62 @@
+.userPage {
+  width: 50%;
+  display: inherit;
+  flex-direction: column;
+  justify-content: flex-start;
+  border: solid 2px;
+  padding: 10px 0;
+
+  .userPageHeader {
+    padding-right: 15px;
+
+    .userPageTitle {
+      display: flex;
+      justify-content: center;
+    }
+
+    .userPageMain {
+      display: flex;
+
+      .userPageAvatar {
+        width: 180px;
+        height: 140px;
+        margin: 0 15px;
+      }
+
+      .userPageDescription {
+        display: inherit;
+        flex-direction: column;
+      }
+    }
+
+    .userPageBio {
+      margin: 15px;
+    }
+  }
+
+  .userPageInput {
+    margin: 0 15px;
+  }
+
+  .userPageBody {
+    margin-top: 15px;
+
+    .userPageRepo {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 30px;
+      border: solid 1px;
+      padding: 3px 13px;
+
+      .userPageCounts {
+        display: inherit;
+        flex-direction: column;
+
+        .userPageCountsTitle {
+          margin-left: 15px;
+        }
+      }
+    }
+  }
+}

@@ -1,28 +1,47 @@
 import {ghPagesAPI} from "../api/api";
 import {AppThunk} from "./store";
-import {UsersType, UserType} from "./types";
+import {ReposType, UsersType, UserType} from "./types";
 import {AxiosResponse} from "axios";
 
 const initialState: InitialStateType = {
     users: [],
-    user: {login: 'Ivan'}
-}
-
-export const users = (state: InitialStateType = initialState, action: ActionsType): UsersType[] => {
-    switch (action.type) {
-        case 'GET-USERS':
-            return action.usersArray.map(el => el)
-        default:
-            return state.users
+    user: {
+        avatar_url: '',
+        login: '',
+        email: '',
+        location: '',
+        following: 0,
+        followers: 0,
+        created_at: '',
+        bio: null,
+        repos: []
     }
 }
 
-export const user = (state: InitialStateType = initialState, action: ActionsType): UserType | object => {
+export const appReducer = (state: InitialStateType = initialState, action: ActionsType): InitialStateType => {
     switch (action.type) {
+        case 'GET-USERS':
+            return {
+                ...state,
+                users: action.usersArray.map(el => ({
+                    login: el.login, id: el.id, avatar_url: el.avatar_url, numRepos: el.numRepos}))
+            }
         case 'GET-USER':
-            return action.currentUser
+            return {
+                ...state, user: {
+                    login: action.currentUser.login,
+                    email: action.currentUser.email,
+                    location: action.currentUser.location,
+                    following: action.currentUser.following,
+                    followers: action.currentUser.followers,
+                    created_at: action.currentUser.created_at,
+                    avatar_url: action.currentUser.avatar_url,
+                    bio: action.currentUser.bio,
+                    repos: action.currentUser.repos
+                }
+            }
         default:
-            return {...state.user}
+            return state
     }
 }
 
@@ -39,7 +58,7 @@ export const getUsersTC = (): AppThunk => (dispatch) => {
             .catch((err: string) => {
                 console.log(err)
             })
-   }
+    }
 }
 
 export const getUserTC = (login: string): AppThunk => (dispatch) => {
@@ -49,11 +68,33 @@ export const getUserTC = (login: string): AppThunk => (dispatch) => {
     } else {
         ghPagesAPI.getUser(login)
             .then((res: AxiosResponse) => {
-                 localStorage.setItem(`${login}`, JSON.stringify(res.data))
-                 dispatch(setUserAC(res.data))
+                ghPagesAPI.getRepos(login)
+                    .then((response: AxiosResponse) => {
+                        let userWithRepos = {
+                            ...res.data,
+                            repos: response.data.map((el: ReposType) => ({
+                                name: el.name,
+                                stargazers_count: el.stargazers_count,
+                                forks_count: el.forks_count,
+                                id: el.id
+                            }))
+                        }
+                        let dataFromLocalStorage = localStorage.getItem('users-data')
+                        debugger
+                        let usersDataWithReposCount = dataFromLocalStorage !== null &&
+                            JSON.parse(dataFromLocalStorage).map((el: UsersType) =>
+                                el.login === res.data.login
+                                    ? ({...el, numRepos: response.data.length}) : el)
+                        localStorage.setItem(`${login}`, JSON.stringify(userWithRepos))
+                        localStorage.setItem('users-data', JSON.stringify(usersDataWithReposCount))
+                        dispatch(setUserAC(userWithRepos))
+                    })
+                    .catch((err: string) => {
+                        console.log(err)
+                    })
             })
-            .catch((err: string) => {
-                console.log(err)
+            .catch((error: string) => {
+                console.log(error)
             })
     }
 }
@@ -66,7 +107,8 @@ export type setUserActionType = ReturnType<typeof setUserAC>
 
 export type InitialStateType = {
     users: Array<UsersType>,
-    user: UserType | object
+    user: UserType,
+
 }
 
 type ActionsType = setUsersActionType | setUserActionType

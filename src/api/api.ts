@@ -10,6 +10,9 @@ export const ghPagesAPI = {
     },
     getUser(userName: string) {
         return instance.get<AxiosResponse>(`users/${userName}`);
+    },
+    getRepos(userName: string) {
+        return instance.get<AxiosResponse>(`users/${userName}/repos`);
     }
 }
 
