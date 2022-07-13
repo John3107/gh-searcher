@@ -1,10 +1,17 @@
 import React from 'react';
-import {ReposType} from "../../app/types";
 import style from "./UserPage.module.scss";
 
-export const Repo = ({name, stargazers_count, forks_count}: ReposType) => {
+type PropsType = {
+    name: string
+    stargazers_count: number
+    forks_count: number
+    setRepoName: (name: string) => void
+}
+
+export const Repo = ({name, stargazers_count, forks_count, setRepoName}: PropsType) => {
+
     return (
-        <div className={style.userPageRepo}>
+        <div className={style.userPageRepo} onClick={() => setRepoName(name)}>
             <span>{name}</span>
             <div className={style.userPageCounts}>
                 <div>{forks_count}<span className={style.userPageCountsTitle}>Forks</span></div>

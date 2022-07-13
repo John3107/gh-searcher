@@ -40,6 +40,10 @@ export const appReducer = (state: InitialStateType = initialState, action: Actio
                     repos: action.currentUser.repos
                 }
             }
+        case 'GET-REPOS':
+            return {
+                ...state, user: { ...state.user, repos: action.reposArray}
+            }
         default:
             return state
     }
@@ -80,7 +84,6 @@ export const getUserTC = (login: string): AppThunk => (dispatch) => {
                             }))
                         }
                         let dataFromLocalStorage = localStorage.getItem('users-data')
-                        debugger
                         let usersDataWithReposCount = dataFromLocalStorage !== null &&
                             JSON.parse(dataFromLocalStorage).map((el: UsersType) =>
                                 el.login === res.data.login
@@ -99,11 +102,31 @@ export const getUserTC = (login: string): AppThunk => (dispatch) => {
     }
 }
 
+export const userSearchedTC = (inputValue: string): AppThunk => (dispatch) => {
+    let dataFromLocalStorage = localStorage.getItem('users-data')
+    if (dataFromLocalStorage) {
+        let filteredDataFromLocalStorage = JSON.parse(dataFromLocalStorage)
+            .filter((el: UsersType) => el.login.includes(inputValue))
+        dispatch(setUsersAC(filteredDataFromLocalStorage))
+    }
+}
+
+export const repoSearchedTC = (login: string, inputValue: string): AppThunk => (dispatch) => {
+    let dataFromLocalStorage = localStorage.getItem(`${login}`)
+    if (dataFromLocalStorage) {
+        let filteredDataFromLocalStorage = JSON.parse(dataFromLocalStorage).repos
+            .filter((el: ReposType) => el.name.includes(inputValue))
+        dispatch(setReposAC(filteredDataFromLocalStorage))
+    }
+}
+
 export const setUsersAC = (usersArray: UsersType[]) => ({type: 'GET-USERS', usersArray} as const)
 export const setUserAC = (currentUser: UserType) => ({type: 'GET-USER', currentUser} as const)
+export const setReposAC = (reposArray: ReposType[]) => ({type: 'GET-REPOS', reposArray} as const)
 
 export type setUsersActionType = ReturnType<typeof setUsersAC>
 export type setUserActionType = ReturnType<typeof setUserAC>
+export type setReposActionType = ReturnType<typeof setReposAC>
 
 export type InitialStateType = {
     users: Array<UsersType>,
@@ -111,4 +134,4 @@ export type InitialStateType = {
 
 }
 
-type ActionsType = setUsersActionType | setUserActionType
+type ActionsType = setUsersActionType | setUserActionType | setReposActionType

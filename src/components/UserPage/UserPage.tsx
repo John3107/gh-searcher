@@ -1,20 +1,40 @@
-import React, {FC, useEffect, useState} from 'react';
-import {useAppSelector} from "../../hooks/hooks";
+import React, {ChangeEvent, FC, useEffect, useState} from 'react';
+import {useAppDispatch, useAppSelector} from "../../hooks/hooks";
 import style from "./UserPage.module.scss";
 import {Repo} from "./Repo";
+import {repoSearchedTC} from "../../app/app-reducer";
+import {useNavigate} from 'react-router-dom';
 
 export const UserPage: FC = () => {
     const data = useAppSelector()
+    const dispatch = useAppDispatch()
+    const navigate = useNavigate()
+
     const [date, setDate] = useState<string[]>([])
+    const [repoSearching, setRepoSearching] = useState<string>('')
+    const [repoName, setRepoName] = useState<string>('')
 
     useEffect(() => {
         const dateUpdater = () => {
             return data.user.created_at.split(/[T Z*]+/)
         }
         setDate(dateUpdater())
+        dispatch(repoSearchedTC(data.user.login, repoSearching))
+    }, [data.user.created_at, repoSearching])
 
-    }, [data.user.created_at])
 
+    useEffect(() => {
+        navigate(`/`)
+    }, [])
+
+
+    const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setRepoSearching(e.currentTarget.value)
+    }
+
+    if (repoName) {
+        window.location.href = `https://github.com/${data.user.login}/${repoName}`
+    }
     return (
         <div className={style.userPage}>
             <div className={style.userPageHeader}>
@@ -32,12 +52,15 @@ export const UserPage: FC = () => {
                 </div>
                 <div className={style.userPageBio}>{data.user.bio}</div>
             </div>
-            <input placeholder={'Search for User`s Repositories'} className={style.userPageInput}/>
+            <input placeholder={'Search for User`s Repositories'}
+                   className={style.userPageInput}
+                   onChange={onChangeHandler}/>
             <div className={style.userPageBody}>
                 {data.user.repos.map(el => <Repo name={el.name}
                                                  stargazers_count={el.stargazers_count}
                                                  forks_count={el.forks_count}
-                                                 key={el.id}/>)}
+                                                 key={el.id}
+                                                 setRepoName={setRepoName}/>)}
             </div>
         </div>
     );
