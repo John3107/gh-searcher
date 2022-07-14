@@ -17,7 +17,7 @@ function App() {
     return (
         <div className={style.app}>
             <Routes>
-                <Route path="/" element={<MainPage/>}/>
+                <Route path="/*" element={<MainPage/>}/>
                 <Route path="/user/:ghLogin" element={<UserPage/>}/>
             </Routes>
         </div>
