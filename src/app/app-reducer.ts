@@ -66,6 +66,7 @@ export const getUsersTC = (): AppThunk => (dispatch) => {
 }
 
 export const getUserTC = (login: string): AppThunk => (dispatch) => {
+    if(!login) return
     let dataFromLocalStorage = localStorage.getItem(`${login}`)
     if (dataFromLocalStorage) {
         dispatch(setUserAC(JSON.parse(dataFromLocalStorage)))

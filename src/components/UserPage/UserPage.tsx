@@ -2,13 +2,13 @@ import React, {ChangeEvent, FC, useEffect, useState} from 'react';
 import {useAppDispatch, useAppSelector} from "../../hooks/hooks";
 import style from "./UserPage.module.scss";
 import {Repo} from "./Repo";
-import {repoSearchedTC} from "../../app/app-reducer";
-import {useNavigate} from 'react-router-dom';
+import {getUserTC, repoSearchedTC} from "../../app/app-reducer";
+import {useLocation} from "react-router-dom";
 
 export const UserPage: FC = () => {
     const data = useAppSelector()
     const dispatch = useAppDispatch()
-    const navigate = useNavigate()
+    const location = useLocation()
 
     const [date, setDate] = useState<string[]>([])
     const [repoSearching, setRepoSearching] = useState<string>('')
@@ -22,11 +22,10 @@ export const UserPage: FC = () => {
         dispatch(repoSearchedTC(data.user.login, repoSearching))
     }, [data.user.created_at, repoSearching])
 
-
     useEffect(() => {
-        navigate(`/`)
+        const historyLogin = location.pathname.split('/')
+        dispatch(getUserTC(historyLogin[2]))
     }, [])
-
 
     const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setRepoSearching(e.currentTarget.value)
@@ -35,6 +34,7 @@ export const UserPage: FC = () => {
     if (repoName) {
         window.location.href = `https://github.com/${data.user.login}/${repoName}`
     }
+
     return (
         <div className={style.userPage}>
             <div className={style.userPageHeader}>

@@ -1,7 +1,7 @@
 import React, {ChangeEvent, FC, useEffect, useState} from 'react';
 import style from './MainPage.module.scss';
 import {useAppDispatch, useAppSelector} from "../../hooks/hooks";
-import {Navigate} from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 import {UserPage} from "../UserPage/UserPage";
 import {userSearchedTC, getUserTC} from "../../app/app-reducer";
 import {User} from "./User";
@@ -9,6 +9,7 @@ import {User} from "./User";
 export const MainPage: FC = () => {
     const dispatch = useAppDispatch()
     const data = useAppSelector()
+    const navigate = useNavigate()
 
     const [user, setUser] = useState<string>('')
     const [userSearching, setUserSearching] = useState<string>('')
@@ -16,6 +17,12 @@ export const MainPage: FC = () => {
     useEffect(() => {
         user && dispatch(getUserTC(user))
         dispatch(userSearchedTC(userSearching))
+
+        if(user){
+            navigate(`/user/${user}`)
+        } else {
+            navigate('/')
+        }
     }, [user, userSearching])
 
     const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
