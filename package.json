@@ -26,7 +26,7 @@
     "typescript": "^4.7.4",
     "web-vitals": "^2.1.4"
   },
-  "homepage": "https://John3107.github.io/gh_Searcher/",
+  "homepage": "https://John3107.github.io/gh-searcher/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
