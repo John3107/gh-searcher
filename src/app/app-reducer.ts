@@ -15,7 +15,8 @@ const initialState: InitialStateType = {
         created_at: '',
         bio: null,
         repos: []
-    }
+    },
+    awaiting: false
 }
 
 export const appReducer = (state: InitialStateType = initialState, action: ActionsType): InitialStateType => {
@@ -44,6 +45,8 @@ export const appReducer = (state: InitialStateType = initialState, action: Actio
             return {
                 ...state, user: { ...state.user, repos: action.reposArray}
             }
+        case 'AWAITING-USER':
+            return {...state, awaiting: action.awaiting}
         default:
             return state
     }
@@ -71,6 +74,7 @@ export const getUserTC = (login: string): AppThunk => (dispatch) => {
     if (dataFromLocalStorage) {
         dispatch(setUserAC(JSON.parse(dataFromLocalStorage)))
     } else {
+        dispatch(setAwaitingUserAC(true))
         ghPagesAPI.getUser(login)
             .then((res: AxiosResponse) => {
                 ghPagesAPI.getRepos(login)
@@ -84,6 +88,7 @@ export const getUserTC = (login: string): AppThunk => (dispatch) => {
                                 id: el.id
                             }))
                         }
+                        dispatch(setAwaitingUserAC(false))
                         let dataFromLocalStorage = localStorage.getItem('users-data')
                         let usersDataWithReposCount = dataFromLocalStorage !== null &&
                             JSON.parse(dataFromLocalStorage).map((el: UsersType) =>
@@ -124,15 +129,17 @@ export const repoSearchedTC = (login: string, inputValue: string): AppThunk => (
 export const setUsersAC = (usersArray: UsersType[]) => ({type: 'GET-USERS', usersArray} as const)
 export const setUserAC = (currentUser: UserType) => ({type: 'GET-USER', currentUser} as const)
 export const setReposAC = (reposArray: ReposType[]) => ({type: 'GET-REPOS', reposArray} as const)
+export const setAwaitingUserAC = (awaiting: boolean) => ({type: 'AWAITING-USER', awaiting} as const)
 
 export type setUsersActionType = ReturnType<typeof setUsersAC>
 export type setUserActionType = ReturnType<typeof setUserAC>
 export type setReposActionType = ReturnType<typeof setReposAC>
+export type setAwaitingUserActionType = ReturnType<typeof setAwaitingUserAC>
 
 export type InitialStateType = {
     users: Array<UsersType>,
     user: UserType,
-
+    awaiting: boolean
 }
 
-type ActionsType = setUsersActionType | setUserActionType | setReposActionType
+type ActionsType = setUsersActionType | setUserActionType | setReposActionType | setAwaitingUserActionType

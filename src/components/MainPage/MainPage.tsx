@@ -17,9 +17,8 @@ export const MainPage: FC = () => {
     useEffect(() => {
         user && dispatch(getUserTC(user))
         dispatch(userSearchedTC(userSearching))
-
         if(user){
-            navigate(`/user/${user}`)
+            !data.awaiting && navigate(`/user/${user}`)
         } else {
             navigate('/')
         }
@@ -29,7 +28,7 @@ export const MainPage: FC = () => {
         setUserSearching(e.currentTarget.value)
     }
 
-    if (user) {
+    if (user && !data.awaiting) {
         return <Navigate to={`/user/${user}`}/> && <UserPage/>
     }
     return (

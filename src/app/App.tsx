@@ -1,13 +1,13 @@
 import React, {useEffect} from 'react';
 import style from './App.module.scss';
 import {getUsersTC} from "./app-reducer";
-import {useAppDispatch} from "../hooks/hooks";
+import {useAppDispatch, useAppSelector} from "../hooks/hooks";
 import {Route, Routes} from "react-router-dom";
 import {MainPage} from "../components/MainPage/MainPage";
 import {UserPage} from "../components/UserPage/UserPage";
 
 function App() {
-
+    const data = useAppSelector()
     const dispatch = useAppDispatch()
 
     useEffect(() => {
@@ -18,7 +18,7 @@ function App() {
         <div className={style.app}>
             <Routes>
                 <Route path="/*" element={<MainPage/>}/>
-                <Route path="/user/:ghLogin" element={<UserPage/>}/>
+                {!data.awaiting && <Route path="/user/:ghLogin" element={<UserPage/>}/>}
             </Routes>
         </div>
     );
