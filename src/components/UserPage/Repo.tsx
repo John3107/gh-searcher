@@ -8,16 +8,11 @@ type PropsType = {
     setRepoName: (name: string) => void
 }
 
-export const Repo = ({name, stargazers_count, forks_count, setRepoName}: PropsType) => {
-
-    return (
-        <div className={style.userPageRepo} onClick={() => setRepoName(name)}>
-            <span>{name}</span>
-            <div className={style.userPageCounts}>
-                <div>{forks_count}<span className={style.userPageCountsTitle}>Forks</span></div>
-                <div>{stargazers_count}<span className={style.userPageCountsTitle}>Stars</span></div>
-            </div>
+export const Repo = ({name, stargazers_count, forks_count, setRepoName}: PropsType) =>
+    <div className={style.userPageRepo} onClick={() => setRepoName(name)}>
+        <span>{name}</span>
+        <div className={style.userPageCounts}>
+            <div>{forks_count}<span className={style.userPageCountsTitle}>Forks</span></div>
+            <div>{stargazers_count}<span className={style.userPageCountsTitle}>Stars</span></div>
         </div>
-
-    )
-}
+    </div>

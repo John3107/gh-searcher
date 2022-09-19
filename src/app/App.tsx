@@ -6,22 +6,18 @@ import {Route, Routes} from "react-router-dom";
 import {MainPage} from "../components/MainPage/MainPage";
 import {UserPage} from "../components/UserPage/UserPage";
 
-function App() {
+const App = () => {
     const data = useAppSelector()
     const dispatch = useAppDispatch()
 
-    useEffect(() => {
-        dispatch(getUsersTC())
-    }, [])
+    useEffect(() => dispatch(getUsersTC()), [dispatch])
 
-    return (
-        <div className={style.app}>
+    return <div className={style.app}>
             <Routes>
                 <Route path="/*" element={<MainPage/>}/>
                 {!data.awaiting && <Route path="/user/:ghLogin" element={<UserPage/>}/>}
             </Routes>
         </div>
-    );
 }
 
 export default App;

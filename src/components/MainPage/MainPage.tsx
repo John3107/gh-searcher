@@ -17,12 +17,12 @@ export const MainPage: FC = () => {
     useEffect(() => {
         user && dispatch(getUserTC(user))
         dispatch(userSearchedTC(userSearching))
-        if(user){
+        if (user) {
             !data.awaiting && navigate(`/user/${user}`)
         } else {
             navigate('/')
         }
-    }, [user, userSearching])
+    }, [user, userSearching, dispatch, data.awaiting, navigate])
 
     const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setUserSearching(e.currentTarget.value)
@@ -31,19 +31,17 @@ export const MainPage: FC = () => {
     if (user && !data.awaiting) {
         return <Navigate to={`/user/${user}`}/> && <UserPage/>
     }
-    return (
-        <div className={style.mainPage}>
-            <h1 className={style.mainPageTitle}>GitHub searcher</h1>
-            <input placeholder={'Search for Users'}
-                   className={style.mainPageInput}
-                   onChange={onChangeHandler}/>
-            <div className={style.mainPageSections}>{
-                data.users.map(el => <User setUser={setUser}
-                                           login={el.login}
-                                           avatar_url={el.avatar_url}
-                                           key={el.id}
-                                           numRepos={el.numRepos}/>)
-            }</div>
-        </div>
-    );
+    return <div className={style.mainPage}>
+        <h1 className={style.mainPageTitle}>GitHub searcher</h1>
+        <input placeholder={'Search for Users'}
+               className={style.mainPageInput}
+               onChange={onChangeHandler}/>
+        <div className={style.mainPageSections}>{
+            data.users.map(el => <User setUser={setUser}
+                                       login={el.login}
+                                       avatar_url={el.avatar_url}
+                                       key={el.id}
+                                       numRepos={el.numRepos}/>)
+        }</div>
+    </div>
 }

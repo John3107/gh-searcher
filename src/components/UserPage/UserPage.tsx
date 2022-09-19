@@ -20,12 +20,12 @@ export const UserPage: FC = () => {
         }
         setDate(dateUpdater())
         dispatch(repoSearchedTC(data.user.login, repoSearching))
-    }, [data.user.created_at, repoSearching])
+    }, [data.user.created_at, repoSearching, data.user.login, dispatch])
 
     useEffect(() => {
         const historyLogin = location.pathname.split('/')
         dispatch(getUserTC(historyLogin[2]))
-    }, [])
+    }, [location.pathname, dispatch])
 
     const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setRepoSearching(e.currentTarget.value)
@@ -35,8 +35,7 @@ export const UserPage: FC = () => {
         window.location.href = `https://github.com/${data.user.login}/${repoName}`
     }
 
-    return (
-        <div className={style.userPage}>
+    return <div className={style.userPage}>
             <div className={style.userPageHeader}>
                 <h1 className={style.userPageTitle}>GitHub searcher</h1>
                 <div className={style.userPageMain}>
@@ -63,6 +62,5 @@ export const UserPage: FC = () => {
                                                  setRepoName={setRepoName}/>)}
             </div>
         </div>
-    );
 }
 
